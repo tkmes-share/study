@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>DEEPS_WebApp_Management</title>
+  {% load static %}
+  {% block bootstrap3_extra_head %}
+  <link rel="icon" href="{% static 'image/favicon.ico' %}">
+  <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/eggplant/jquery-ui.css" type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script type="text/javascript" src="/static/js/jquery-1.8.3.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/static/js/footerFixed.js"></script>
+  {% endblock %}
+  </head>
+<!--  
+
+
+<body> 
+  <div id="header">
+  </div>
+  <div>
+    <p class="ItemHeader">Login</p>
+  </div>
+
+  <form action="menu/" method="post" class="form-inline">
+  {% csrf_token %}
+  <div id="LoginInfo">
+      <p style="margin:30px 0 0 200px; float:left;">ID：</p>
+      <input  id="id" name="id" type="text" style="margin:30px 0 0 68px; font-size: 11pt; float:left;" value="tkmes"/>
+      <div style="clear: both;"></div>
+      
+      <p style="margin:30px 0 0 200px; float:left;">Password：</p>
+      <input id="password" name="password" type="password" style="margin:30px 0 0 20px; font-size: 11pt; float:left;" value="tkmesadmin"/>
+      <div style="clear: both;"></div>
+
+      <div style="margin:30px 0 0 400px; float:left;">
+        <input type="submit" id="login_button" class="btn btn-primary" value="Login" />
+      </div>
+  </div>
+  </form>
+  <div style="clear: both;"></div>"
+
+-->
+
+<body>
+  <div class="calculator">
+   <div style="font-color:#ff9900; margin:50px 50 50 50px;">
+    <a href="/calculator/">電卓</a>
+   </div>
+   
+  <div class="calculator2">
+   <div style="margin: 50px 50 50 50px;">
+    <a href="/calculator2/">電卓2</a>
+   </div>
+
+  <div class="page3">
+   <div style="margin: 50px 50 50 50px;">
+    <a href="page3.html">page3</a>
+   </div>
+   
+  <div class="page4">
+   <div style="margin: 50px 50 50 50px;">
+    <a href="page4.html">page4</a>
+   </div>
+   
+  <div class="page5">
+   <div style="margin: 50px 50 50 50px;">
+    <a href="page5.html">page5</a>
+   </div>
+
+
+  <div id="OtherInfo">
+    <div style="margin:10px 0 0 100px; float:left;">
+      <a href="http://www.tkmes.jp/">運営会社情報</a>
+    </div>
+<!--  
+    <div id="UserEnvironment">
+      <p class="Heading">ご利用環境</p>
+      <p class="Item">・Microsoft Internet Explorer11.0、Microsoft Edge、</p>
+      <p class="Item">　Firefox、Chrome最新版での動作を確認しています。</p>
+      <p class="Item">・Javascript、Cookieは有効にしてください。</p>
+    </div>
+  </div>
+-->
+
+  <div id="footer">
+    <img src="../static/image/logo.png" alt="" width="50" height="50" border="0" style="margin:5px 0 0 20px; float:left">
+    <p id="TkmesInfo" style="margin:20px 0 0 30px;">Tkmes Corporation&copy;2018</p>
+  </div>
+</body>
+</html>

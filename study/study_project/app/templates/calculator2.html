@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>help/QA</title>
+  {% load static %}
+  {% block bootstrap3_extra_head %}
+  <link rel="icon" href="{% static 'image/favicon.ico' %}">
+  <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/redmond/jquery-ui.css" type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script type="text/javascript" src="/static/js/jquery-1.8.3.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/static/js/footerFixed.js"></script>
+  {% endblock %}
+</head>
+<script type="text/javascript">
+myTotal = 0;
+// 現在の合計値
+myInput = "";
+// 現在入力している値
+myCalc = "+";
+// 合計と入力値の演算子
+myFlg = 1;
+// １回前に入力したもの 0:数字 1:演算子
+ 
+
+function myValue(myData){
+// 0～9または小数点ボタンを押した
+    myFlg = 0;
+    // １回前に入力したものは数値
+    myInput += myData;
+    // 現在入力している値に追加
+    document.myForm.myLine.value = myInput;
+    // 現在入力している値表示
+    }
+
+ 
+
+function myCalculate(myData){
+// 演算ボタンを押した
+    if (myFlg==0){
+    // １回前に入力したものは数値か？
+    myFlg = 1;
+    // １回前に入力したものは演算子
+    myWork = myTotal + myCalc + myInput;
+    // 一連の計算式を作る
+    myTotal = eval(myWork);
+    // 計算式を計算させる
+    myInput = "";
+    // 現在入力している値をクリア
+    document.myForm.myLine.value = myTotal;
+    // 合計を表示
+    }
+
+    if (myData == "="){
+    // 演算ボタンは[＝]か？
+    myTotal = 0;
+    // 合計をクリア
+    myCalc = "+";
+    // 演算子を[+]とする
+    }else{
+    // 演算ボタンは[＝]以外である
+    myCalc = myData;
+    // 演算子を退避させておく
+    }
+
+}
+
+ 
+
+function myC(){
+// クリアボタン[C]を押した
+    myTotal = "";  // 合計クリア
+    myCalc = "+"; // 演算子クリア
+    myInput = ""; // 現在入力している値をクリア
+    document.myForm.myLine.value = myTotal; // つまり、０を表示
+    }
+
+</script>
+
+ <div style="margin:18px 20px 0 50px; float:right;">
+    <input type="submit" class="btn btn-info" onClick="location.href='/'" value="Logout"/>
+  </div>
+  <div id="header">
+    <div style="float: right;">
+      <p id="LoginID" style="margin:10px 10px 0 0;">User　　 ： {{user_id}}</p>
+      <p id="LoginDate" style="margin:2px 10px 0 0;">Last-login： {{datetime}}</p>
+    </div>
+  </div>
+  <div style="clear: both;"></div>
+
+  <div>
+    <p class="ItemHeader">calculator</p>
+  </div>
+  <div id="CalculatorInfo">
+   
+    <form name="myForm" style= "margin: 30px 0 0 300px;">
+     <table border="1" bgcolor="#BDB76B">
+        <tr>
+            <td align="center" colspan="4" bgcolor="#4169e1"><font color="#FFFFFF">
+            <strong> 電　卓</font></strong></td>
+        </tr>
+        <tr>
+            <td colspan="3"><input type="text" size="12" name="myLine" value=""></td>
+            <td align="center"><input type="button" value=" C " onclick="myC()"></td>
+        </tr>
+        <tr>
+            <td align="center"><input type="button" value=" 7 " onclick="myValue(7)"></td>
+            <td align="center"><input type="button" value=" 8 " onclick="myValue(8)"></td>
+            <td align="center"><input type="button" value=" 9 " onclick="myValue(9)"></td>
+            <td align="center"><input type="button" value=" ÷ " onclick="myCalculate('/')"></td>
+        </tr>
+        <tr>
+            <td align="center"><input type="button" value=" 4 " onclick="myValue(4)"></td>
+            <td align="center"><input type="button" value=" 5 " onclick="myValue(5)"></td>
+            <td align="center"><input type="button" value=" 6 " onclick="myValue(6)"></td>
+            <td align="center"><input type="button" value=" × " onclick="myCalculate('*')"></td>
+        </tr>
+        <tr>
+            <td align="center"><input type="button" value=" 1 " onclick="myValue(1)"></td>
+            <td align="center"><input type="button" value=" 2 " onclick="myValue(2)"></td>
+            <td align="center"><input type="button" value=" 3 " onclick="myValue(3)"></td>
+            <td align="center"><input type="button" value=" - " onclick="myCalculate('-')"></td>
+        </tr>
+        <tr>
+            <td align="center"><input type="button" value=" 0 " onclick="myValue(0)"></td>
+            <td align="center"><input type="button" value=" . " onclick="myValue('.')"></td>
+            <td align="center"><input type="button" value=" + " onclick="myCalculate('+')"></td>
+            <td align="center"><input type="button" value=" = " onclick="myCalculate('=')"></td>
+        </tr>
+     </table>
+    </form>   
+  </div>
+
+  <div style="clear: both;"></div>
+
+  <div style="margin:60px 0 0 700px;">
+    <input type="image" onClick="location.href='../menu'" src="../static/image/btn_007.png" alt="back">
+    <div onClick="location.href='../menu'" style="position:absolute; margin:-35px 0 0 30px; color:#fff; cursor:pointer;">⇚back</div>
+  </div>
+  <div style="clear: both;"></div>
+
+  <div id="footer">
+    <img src="../static/image/logo.png" alt="" width="50" height="50" border="0" style="margin:5px 0 0 20px; float:left">    
+    <p id="TkmesInfo" style="margin:20px 0 0 30px; font-size:20pt">Tkmes Corporation&copy;2018</p>
+  </div>
+
+ 
+
+</html>
+

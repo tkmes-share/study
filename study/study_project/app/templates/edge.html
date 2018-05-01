@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>DEEPS_WebApp_Edge</title>
+
+  {% load static %}
+  {% block bootstrap3_extra_head %}
+  <link rel="icon" href="{% static 'image/favicon.ico' %}">
+  <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/basic.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/dropzone.min.css">
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/redmond/jquery-ui.css" type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script type="text/javascript" src="/static/js/jquery-1.8.3.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/static/js/footerFixed.js"></script>
+  <script type="text/javascript" src="/static/js/dropzone.min.js"></script>
+  <script type="text/javascript" src="/static/js/dropzone-amd-module.min.js"></script>
+  {% endblock %}
+
+  <script type="text/javascript">
+    Dropzone.autoDiscover = false;
+    $(function(){
+      $('#drop_area').dropzone({
+        url:'/edge/',
+        paramName : "file",	           // 受信側の$_FILESのキー
+        parallelUploads:1,            // 1度に何ファイルずつアップロードするか
+        addRemoveLinks:true,
+        acceptedFiles:'.jpg',         // アップロード許可ファイルを定義
+        maxFiles:1,                   // 1度にアップロード出来るファイルの数
+        maxFilesize:2,                // 1つのファイルの最大サイズ(1=1M)
+        beforeSend: function(request) {
+            return request.setRequestHeader('X-CSRF-Token', $("meta[name='token']").attr('content'));
+        },
+        previewsContainer:'#preview_area',
+        previewTemplate: "<div class=\"dz-preview dz-file-preview\">\n <div class=\"dz-details\">\n <div class=\"dz-filename\"><span data-dz-name></span></div>\n <div class=\"dz-size\" data-dz-size></div>\n <img data-dz-thumbnail />\n </div>\n <div class=\"dz-progress\"><span class=\"dz-upload\" data-dz-uploadprogress></span></div>\n <div class=\"dz-success-mark\"><span>&#10004;</span></div>\n <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n</div>\n",
+        thumbnailWidth:200, //px
+        thumbnailHeight:100, //px
+        dictFileTooBig: "ファイルが大きすぎます。 ({{filesize}}MiB). 最大サイズ: {{maxFilesize}}MiB.",
+        dictInvalidFileType: "csvファイル以外です。",
+        dictMaxFilesExceeded: "一度にアップロード出来るのは1ファイルまでです。",
+        dictRemoveFile:'削除',
+        dictCancelUpload:'キャンセル',
+        uploadprogress: function(_file, _progress, _size){
+          _file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "" + _progress + "%";
+        },
+        success: function(_file, _return, _xml){
+			  //引数の _return には サーバ側で出力(echo or print)された値を格納
+        _file.previewElement.classList.add("dz-success");
+        console.log(_return);
+        },
+        error: function(_file, _error_msg){
+        var ref;
+          (ref = _file.previewElement) != null ? ref.parentNode.removeChild(_file.previewElement) : void 0;
+        },
+        removedfile: function(_file){
+          var fname = _file.name;
+          // サーバのファイルを削除
+          $.ajax({
+            url: "/img_delete/",
+            type: "post",
+            data: JSON.stringify(fname),
+            cache: false,
+            dataType: 'json',
+            contentType: 'application/json',
+            headers: {
+                'X-CSRFToken': $('meta[name="token"]').attr('content')
+            },
+            // 成功したらサムネイルを削除
+            complete: function() {
+              var _ref;
+                if (_file.previewElement) {
+                  if ((_ref = _file.previewElement) != null) {
+                    _ref.parentNode.removeChild(_file.previewElement);
+                  }
+                }
+            }
+          });
+        },
+		    dragover: function(e){	//ドロップ時の処理
+			    $("#drop_area").css("background-color", "#f0f0f0");
+		    },
+		    dragleave: function(e){	//ドロップが外れた場合の処理
+			    $("#drop_area").css("background-color", "#ffffff");
+		    }
+	    });
+    });
+    
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        crossDomain: false, // obviates need for sameOrigin test
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+  </script>
+</head>
+
+<body>
+  <div style="margin:18px 20px 0 50px; float:right;">
+    <input type="submit" class="btn btn-info" onClick="location.href='/'" value="Logout"/>
+  </div>
+  <div id="header">
+    <div style="float: right;">
+      <p id="LoginID" style="margin:10px 10px 0 0;">User　　 ： {{user_id}}</p>
+      <p id="LoginDate" style="margin:2px 10px 0 0;">Last-login： {{datetime}}</p>
+    </div>
+  </div>
+  <div style="clear: both;"></div>
+
+  <div>
+    <p class="edgeHeader">エッジ検出</p>
+  </div>
+
+  <div id="edgeInfo">
+    <form id="dropForm" method="post" action="">
+      {% csrf_token %}
+      <div id="drop_area" class="dropzone-custom" style><br /><br />ここにドラッグするか、クリックして<br/>ファイルを選択して下さい。</div>
+      <div id="preview_area" class="dropzone-custom"></div>
+      <div id="out_area" class="dropzone-custom"></div>
+    </form>
+  </div>
+  <div style="clear: both;"></div>
+
+  <div style="margin:60px 0 0 650px;">
+    <input type="image" onClick="location.href='../menu'" src="../static/image/btn_007.png" alt="back">
+    <div onClick="location.href='../menu'" style="position:absolute; margin:-35px 0 0 30px; color:#fff; cursor:pointer;">⇚back</div>
+  </div>
+  <div style="clear: both;"></div>
+
+  <div id="footer">
+    <img src="../static/image/logo.png" alt="" width="50" height="50" border="0" style="margin:5px 0 0 20px; float:left">
+    <p id="TkmesInfo" style="margin:20px 0 0 30px;">Tkmes Corporation&copy;2018</p>
+  </div>
+
+</body>
+</html>

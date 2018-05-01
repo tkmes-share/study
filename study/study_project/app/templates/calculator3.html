@@ -1,0 +1,25 @@
+<!-- File dependencies -->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Calculator">
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="js/dep_js/jquery-2.1.0.min.js"></script>
+<script src="js/dep_js/jquery-ui-1.10.4.custom.min.js"></script>
+<script src="js/jquery.thecalculator.js"></script>
+<link rel=stylesheet href="css/dep_css/jquery-ui.min.css">
+<link rel=stylesheet href="css/jquery.thecalculator.css">
+</head>
+<body>
+<h1>Calculatorのデモでーす。</h1>
+<div id='calc'></div>
+ 
+<script>
+  $(document).ready(function () {
+    $('#calc').calculator().draggable();
+  });
+</script>
+</body>
+</htmL>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>DEEPS_WebApp_Collect</title>
+  
+  {% load static %}
+  {% block bootstrap3_extra_head %}
+  <link rel="icon" href="{% static 'image/favicon.ico' %}">
+  <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/redmond/jquery-ui.css" type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script type="text/javascript" src="/static/js/jquery-1.8.3.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/static/js/footerFixed.js"></script>
+  {% endblock %}
+
+  <script type="text/javascript">
+    var out_file = ""
+    $(function(){
+        $("#button1").click(function(){
+              var post_data = $("#myselect").val();
+              $.ajax({
+                url: '/scraping/',
+                type: 'POST',
+                data: JSON.stringify(post_data),
+                dataType: 'json',
+                processData: false,
+                contentType: 'application/json',
+                timeout: 10000
+              }).done(function (res) {
+//                alert(JSON.stringify(post_data));
+                console.log('done', res);
+                out_file = res
+                $("#dialog1").dialog("open");
+              }).fail(function( jqXHR, textStatus, errorThrown ) {
+                console.log( 'ERROR', jqXHR, textStatus, errorThrown );
+              });
+      });
+
+      $("#dialog1").dialog({
+        autoOpen: false,
+        width: 400,
+        modal: true,
+        buttons: [
+          {
+            text: 'ダウンロード',
+            click: function(){
+              var url = '../static/output/' + out_file.res;
+              location.href = url;
+              $(this).dialog("close");
+            }
+          },
+          {
+            text: '閉じる',
+            click: function(){
+              $(this).dialog("close");
+            }
+          }
+        ]
+      });
+    });
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        crossDomain: false, // obviates need for sameOrigin test
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    function go(){
+      //EnterキーならSubmit
+      if(window.event.keyCode == 13){
+              alert ("enter pressed")
+              var post_data = $("#myselect").val();
+              $.ajax({
+                url: '/scraping/',
+                type: 'POST',
+                data: JSON.stringify(post_data),
+                dataType: 'json',
+                processData: false,
+                contentType: 'application/json',
+                timeout: 10000
+              }).done(function (res) {
+//                alert(JSON.stringify(post_data));
+                console.log('done', res);
+                out_file = res
+                $("#dialog1").dialog("open");
+              }).fail(function( jqXHR, textStatus, errorThrown ) {
+                console.log( 'ERROR', jqXHR, textStatus, errorThrown );
+              });
+      };
+      return false();
+    };
+  </script>
+</head>
+
+<body>
+  <div style="margin:18px 20px 0 50px; float:right;">
+    <input type="submit" class="btn btn-info" onClick="location.href='/'" value="Logout"/>
+  </div>
+  <div id="header">
+    <div style="float: right;">
+      <p id="LoginID" style="margin:10px 10px 0 0;">User　　 ： {{user_id}}</p>
+      <p id="LoginDate" style="margin:2px 10px 0 0;">Last-login： {{datetime}}</p>
+    </div>
+  </div>
+  <div style="clear: both;"></div>
+
+  <div>
+    <p class="ItemHeader">商品画像収集</p>
+  </div>
+
+  <div id="LoginInfo">
+    <form id="myForm" name="myForm" class="myForm" method="post" action="">
+      <p style="margin:20px -60px 0 0;">商品名／型番を入力してください。</p>
+      {% csrf_token %}
+      <input type="text" id="myselect" onkeydown="go();" size="24" style="margin:20px 0 0 0; font-size: 11pt;" value="" required="required">
+      <div style="clear: both;"></div>
+      
+      <div style="margin:30px 0 0 140px;">
+        <input type="button" id="button1" class="btn btn-primary" value="実行"></button>
+      </div>
+    </form>    
+  </div>
+  <div style="clear: both;"></div>
+  
+  <div style="margin:60px 0 0 650px;">
+    <input type="image" onClick="location.href='../menu'" src="../static/image/btn_007.png" alt="back">
+    <div onClick="location.href='../menu'" style="position:absolute; margin:-35px 0 0 30px; color:#fff; cursor:pointer;">⇚back</div>
+  </div>
+  <div style="clear: both;"></div>
+
+  <!--ダイアログを配置-->
+  <div id="dialog1" title="complete">
+    <br />
+    <p>処理が完了しました。</p>
+    <p>ファイルに対する操作を選択してください。</p>
+  </div>
+  <div style="clear: both;"></div>
+
+  <div id="footer">
+    <img src="../static/image/logo.png" alt="" width="50" height="50" border="0" style="margin:5px 0 0 20px; float:left">
+    <p id="TkmesInfo" style="margin:20px 0 0 30px;">Tkmes Corporation&copy;2018</p>
+  </div>
+
+</body>
+</html>
+
